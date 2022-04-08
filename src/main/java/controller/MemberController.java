@@ -3,13 +3,12 @@ package controller;
 import java.util.*;
 
 
-import business.Address;
-import business.LibraryMember;
-import business.Role;
-import dataaccess.DataAccessFacade;
-import ui.AddNewMember;
+import businessmodels.Address;
+import businessmodels.LibraryMember;
+import dataaccess.DataAccessorFacade;
+import uimodels.AddNewMember;
 import exceptions.AlreadyExistsException;
-import dao.LibraryMemberDAO;
+import models.LibraryMemberModel;
 
 
 public class MemberController {
@@ -21,14 +20,14 @@ public class MemberController {
         return instance;
     }
 
-    public void addMember(LibraryMemberDAO newMember, AddNewMember component) throws Exception{
+    public void addMember(LibraryMemberModel newMember, AddNewMember component) throws Exception{
         MemberValidator.validateInput(newMember);
 
         Address address = new Address(
             newMember.street(), newMember.city(), newMember.state(), newMember.zip()
         );
         
-        DataAccessFacade db = DataAccessFacade.getInstance();
+        DataAccessorFacade db = DataAccessorFacade.getInstance();
     
         if(db.memberExists(newMember.memberId()))  {
             throw new AlreadyExistsException("Member with the [MemberID: " + newMember.memberId() + "] already exists.");
@@ -45,6 +44,6 @@ public class MemberController {
 
 
     public List<LibraryMember> getLibraryMemberList() {
-        return DataAccessFacade.getInstance().getLibraryMemberList();
+        return DataAccessorFacade.getInstance().getLibraryMemberList();
     }
 }

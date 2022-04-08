@@ -1,9 +1,7 @@
 package Validators;
 
-import business.Book;
+import businessmodels.Book;
 import exceptions.InvalidFieldException;
-
-import java.util.stream.Stream;
 
 public class BookValidator implements validators.Validator<Book> {
     public BookValidator(){}

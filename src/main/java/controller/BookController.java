@@ -5,20 +5,16 @@ import java.util.stream.Collectors;
 
 import Validators.BookValidator;
 import Validators.ValidatorFactory;
-import validators.Validator;
-import auth.AuthenticationManager;
-import auth.UserDAO;
-import dao.AuthorDAO;
 import dataaccess.*;
 import exceptions.InvalidFieldException;
 
-import business.*;
+import businessmodels.*;
 
-import dao.BookDAO;
-import dao.BookCopyDAO;
+import models.BookModel;
+import models.BookCopyModel;
 
-import ui.AddBookCopy;
-import ui.AddNewBook;
+import uimodels.AddBookCopy;
+import uimodels.AddNewBook;
 
 public class BookController {
     private static BookController instance = new BookController();
@@ -29,31 +25,31 @@ public class BookController {
         return instance;
     }
 
-    public void addBookCopy(BookCopyDAO bookCopyDAO, AddBookCopy component) throws Exception {
+    public void addBookCopy(BookCopyModel bookCopyModel, AddBookCopy component) throws Exception {
         
-        ValidatorFactory.checkNotEmptyOrNull(bookCopyDAO);
+        ValidatorFactory.checkNotEmptyOrNull(bookCopyModel);
         
-        String isbn = bookCopyDAO.isbn(); // TODO: Need to come from UI
-        int numCopy = bookCopyDAO.numCopy();
+        String isbn = bookCopyModel.isbn(); // TODO: Need to come from UI
+        int numCopy = bookCopyModel.numCopy();
 
-        Book book = DataAccessFacade.getInstance().getBook(isbn);
+        Book book = DataAccessorFacade.getInstance().getBook(isbn);
             for(int i = 0; i < numCopy; i++){
                 book.addBookCopy(new BookCopy(book, book.getCopyCount() + 1));
             }
         
-        DataAccessFacade.getInstance().saveNewBook(book);
+        DataAccessorFacade.getInstance().saveNewBook(book);
     }
 
-    public void addNewBook(BookDAO bookDAO, AddNewBook component) {
+    public void addNewBook(BookModel bookModel, AddNewBook component) {
 
        BookValidator validator =  ValidatorFactory.getBookValidator();
 
         Book book = new Book.Builder(
-                bookDAO.isbn(),
-                bookDAO.title(),
-                bookDAO.authors().stream().map(Author::new).collect(Collectors.toList())
-        ).maxCheckout(bookDAO.maxCheckoutLength())
-                .numCopies(bookDAO.numCopies()).build();
+                bookModel.isbn(),
+                bookModel.title(),
+                bookModel.authors().stream().map(Author::new).collect(Collectors.toList())
+        ).maxCheckout(bookModel.maxCheckoutLength())
+                .numCopies(bookModel.numCopies()).build();
 
         try{
             validator.validate(book);
@@ -62,10 +58,10 @@ public class BookController {
             throw new InvalidFieldException("Some inputs are incorrect", "Please double check");
         }
 
-        DataAccessFacade.getInstance().saveNewBook(book);
+        DataAccessorFacade.getInstance().saveNewBook(book);
     }
 
     public List<Book> getBookList() {
-        return DataAccessFacade.getInstance().getBookList();
+        return DataAccessorFacade.getInstance().getBookList();
     }
 }

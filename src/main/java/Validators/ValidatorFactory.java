@@ -8,19 +8,6 @@ public class ValidatorFactory {
         return new BookValidator();
     }
     
-    public static boolean isInteger(String str) {
-	try {
-            int int_rep = Integer.parseInt(str);
-            return true;
-        } catch(NumberFormatException e) {
-            return false;
-        }
-    }
-    
-    public static boolean notNull(Object obj) {
-        return obj != null;
-    }
-    
     public static void checkNotEmptyOrNull(Object obj) throws Exception {
         RecordComponent[] rc = obj.getClass().getRecordComponents();
         for(RecordComponent f : rc){   
